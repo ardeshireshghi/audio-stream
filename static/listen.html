@@ -22,10 +22,23 @@
       document.getElementById('play').onclick = () => {
         const audio = document.getElementById('player')
 
-        audio.src = '/stream'
+        audio.src = `/stream?t=${Date.now()}`
         audio.controls = true;
         audio.play()
 
+        audio.onpause = () => {
+          if (isFinite(audio.duration) && Math.abs(audio.duration - audio.currentTime) < 0.1 ) {
+            const lastCurrentTime = audio.currentTime
+            audio.src = `/stream?t=${Date.now()}`
+
+            audio.addEventListener('loadeddata', () =>
+            {
+
+              audio.play()
+              audio.currentTime = lastCurrentTime
+            }, {once: true})
+          }
+        }
       }
     </script>
 
