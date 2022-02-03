@@ -1,7 +1,7 @@
-const { createReadStream, createWriteStream } = require('fs');
-const { PassThrough, Duplex } = require('stream');
+const { createReadStream } = require('fs');
 const http = require('http');
 const fsAsync = require('fs').promises;
+
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
 
