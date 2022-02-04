@@ -37,16 +37,17 @@ function createVisualiser({
 
     if (type === VisualizerType.MediaEl) {
       source = audioCtx.createMediaElementSource(audioElOrStream);
+      source.connect(audioCtx.destination);
     } else if (type === VisualizerType.Stream) {
-      source = audioCtx.createMediaStreamSource(stream);
+      source = audioCtx.createMediaStreamSource(audioElOrStream);
     }
 
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 2048;
+
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    source.connect(audioCtx.destination);
     source.connect(analyser);
 
     draw();
