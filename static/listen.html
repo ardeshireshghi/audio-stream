@@ -77,6 +77,10 @@
         font-weight: 600;
         font-size: 1.616rem;
       }
+
+      .is-hidden {
+        visibility: hidden;
+      }
     </style>
   </head>
   <body>
@@ -86,6 +90,7 @@
         <div class="cover"></div>
         <div class="title">Listen to Ardi Radio</div>
         <audio id="player"></audio>
+        <canvas class="visualizer is-hidden" height="20px"></canvas>
         <div class="player">
           <button id="play" class="btn__player">
             <img src="http://simpleicon.com/wp-content/uploads/play1.svg" />
@@ -96,6 +101,7 @@
           </button>
         </div>
       </div>
+      <script src="static/js/visualizer.js"></script>
       <script>
         const throttle = (fn, delay = 1000) => {
           let shouldCall = true;
@@ -111,6 +117,18 @@
         };
 
         const audio = document.getElementById('player');
+        const canvas = document.querySelector('.visualizer');
+        let hasVisualiserStarted = false;
+
+        const visualizer = createVisualiser({
+          type: VisualizerType.MediaEl,
+          canvasEl: canvas,
+          styles: {
+            width: 400,
+            lineColor: 'rgb(190 46 46 / 62%)'
+          }
+        });
+
         const loadMore = throttle(() => {
           const lastCurrentTime = audio.currentTime;
           audio.src = `/stream?t=${Date.now()}`;
@@ -142,6 +160,12 @@
           }
 
           audio.play();
+          canvas.classList.remove('is-hidden');
+
+          if (!hasVisualiserStarted) {
+            visualizer.visualize(audio);
+            hasVisualiserStarted = true;
+          }
         };
 
         document.getElementById('pause').onclick = () => {
