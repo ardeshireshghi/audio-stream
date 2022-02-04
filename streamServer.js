@@ -1,6 +1,5 @@
-const { createReadStream, openSync, closeSync, unlinkSync } = require('fs');
+const { createReadStream, openSync, closeSync } = require('fs');
 const http = require('http');
-const fsAsync = require('fs').promises;
 
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
