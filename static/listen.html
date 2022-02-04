@@ -1,46 +1,154 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
     <title>Web dictaphone</title>
-    <link href="/static/styles/app.css" rel="stylesheet" type="text/css">
+    <link href="/static/styles/app.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        background: rgb(241 148 148);
+      }
+
+      .btn__player {
+        cursor: pointer;
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        display: inline-block;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0px 1px 8px 1px hsl(0deg 0% 0% / 15%);
+        padding: 0;
+        padding-left: 0.1rem;
+      }
+
+      .btn__player img {
+        width: 80px;
+        transition: transform 0.25s;
+        will-change: transform;
+        color: white;
+      }
+
+      .btn__player:hover,
+      .btn__player:active,
+      .btn__player:focus {
+        box-shadow: inset 0px 0px 40px rgba(255, 255, 255, 1);
+        background: #b3cad2d4;
+      }
+      .btn__player:hover img {
+        transform: scale(1.1);
+      }
+
+      .player {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+      }
+
+      img.cover {
+        max-width: 300px;
+        margin: auto;
+      }
+
+      .cover {
+        background-image: url(https://about.me/cdn-cgi/image/q=40,dpr=2,f=auto,fit=cover,w=620,h=413.3333333333333,gravity=0.25x0.25/https://assets.about.me/background/users/a/r/d/ardi.eshghi_gmail.com_1478774301_45.jpg);
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 400px;
+        height: 400px;
+        background-size: cover;
+        flex-grow: 0;
+        flex-shrink: 0;
+        border-radius: 30px;
+      }
+
+      .content {
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .title {
+        font-weight: 600;
+        font-size: 1.616rem;
+      }
+    </style>
   </head>
   <body>
-
     <div class="wrapper">
+      <header></header>
+      <div class="content">
+        <div class="cover"></div>
+        <div class="title">Listen to Ardi Radio</div>
+        <audio id="player"></audio>
+        <div class="player">
+          <button id="play" class="btn__player">
+            <img src="http://simpleicon.com/wp-content/uploads/play1.svg" />
+          </button>
 
-      <header>
-        <h1>Listen to stream</h1>
-      </header>
-      <audio id="player"></audio>
-      <button id="play">Play stream</button>
+          <button id="pause" class="btn__player">
+            <img src="http://simpleicon.com/wp-content/uploads/pause.svg" />
+          </button>
+        </div>
+      </div>
+      <script>
+        const throttle = (fn, delay = 1000) => {
+          let shouldCall = true;
+          return (...args) => {
+            if (shouldCall) {
+              fn(...args);
+              shouldCall = false;
+              setTimeout(() => {
+                shouldCall = true;
+              }, delay);
+            }
+          };
+        };
 
+        const audio = document.getElementById('player');
+        const loadMore = throttle(() => {
+          const lastCurrentTime = audio.currentTime;
+          audio.src = `/stream?t=${Date.now()}`;
 
-    <script>
-
-      document.getElementById('play').onclick = () => {
-        const audio = document.getElementById('player')
-
-        audio.src = `/stream?t=${Date.now()}`
-        audio.controls = true;
-        audio.play()
+          audio.addEventListener(
+            'loadeddata',
+            () => {
+              clearTimeout(shouldWaitForUpdateTimeout);
+              audio.play();
+              audio.currentTime = lastCurrentTime;
+            },
+            { once: true }
+          );
+        }, 2000);
 
         audio.onpause = () => {
-          if (isFinite(audio.duration) && Math.abs(audio.duration - audio.currentTime) < 0.1 ) {
-            const lastCurrentTime = audio.currentTime
-            audio.src = `/stream?t=${Date.now()}`
-
-            audio.addEventListener('loadeddata', () =>
-            {
-
-              audio.play()
-              audio.currentTime = lastCurrentTime
-            }, {once: true})
+          if (
+            isFinite(audio.duration) &&
+            Math.abs(audio.duration - audio.currentTime) < 0.1
+          ) {
+            loadMore();
           }
-        }
-      }
-    </script>
+        };
 
+        document.getElementById('play').onclick = () => {
+          const audio = document.getElementById('player');
+
+          if (!audio.src) {
+            audio.src = `/stream?t=${Date.now()}`;
+          }
+
+          audio.play();
+        };
+
+        document.getElementById('pause').onclick = () => {
+          audio.pause();
+        };
+      </script>
+    </div>
   </body>
 </html>
