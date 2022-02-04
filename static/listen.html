@@ -118,7 +118,6 @@
           audio.addEventListener(
             'loadeddata',
             () => {
-              clearTimeout(shouldWaitForUpdateTimeout);
               audio.play();
               audio.currentTime = lastCurrentTime;
             },

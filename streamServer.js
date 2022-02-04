@@ -1,4 +1,4 @@
-const { createReadStream } = require('fs');
+const { createReadStream, openSync, closeSync, unlinkSync } = require('fs');
 const http = require('http');
 const fsAsync = require('fs').promises;
 
@@ -22,13 +22,12 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Clear and recreate buffer
-(async () => {
-  try {
-    await fsAsync.unlink('./buffer');
-    const fd = await fsAsync.open('./buffer', 'w');
-    await fsAsync.close(fd);
-  } catch (err) {}
-})();
+try {
+  console.log('Deleting and recreating buffer file');
+  closeSync(openSync('./buffer', 'w'));
+} catch (err) {
+  console.log('Error:', err);
+}
 
 server.listen(9999, '0.0.0.0', () => {
   console.log('Server started! Listening to port 9999');
