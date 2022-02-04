@@ -4,7 +4,6 @@ const VisualizerType = {
 };
 
 const defaultStyles = {
-  width: 500,
   fillColor: 'rgb(241 148 148)',
   lineColor: 'white',
   lineWidth: 3
@@ -25,7 +24,9 @@ function createVisualiser({
   const canvas = canvasEl;
   const canvasCtx = canvas.getContext('2d');
 
-  canvas.width = visualiserStyles.width;
+  if (visualiserStyles.width) {
+    canvas.width = visualiserStyles.width;
+  }
 
   function visualize(audioElOrStream) {
     if (!audioCtx) {
