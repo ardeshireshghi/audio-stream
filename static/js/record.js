@@ -37,14 +37,6 @@
 
         stop.disabled = false;
         record.disabled = true;
-
-        // fetch('/upload', {
-        //   method: 'POST',
-        //   body: readableStream,
-        //   headers: {
-        //     'content-type': 'audio/webm;codecs=opus'
-        //   }
-        // }).then((res) => console.log(res));
       };
 
       stop.onclick = function () {
@@ -155,11 +147,11 @@
 
       analyser.getByteTimeDomainData(dataArray);
 
-      canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+      canvasCtx.fillStyle = 'white';
       canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
-      canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+      canvasCtx.lineWidth = 5;
+      canvasCtx.strokeStyle = 'blue';
 
       canvasCtx.beginPath();
 
@@ -185,7 +177,7 @@
   }
 
   window.onresize = function () {
-    canvas.width = mainSection.offsetWidth;
+    canvas.width = mainSection.offsetWidth / 2;
   };
 
   window.onresize();
