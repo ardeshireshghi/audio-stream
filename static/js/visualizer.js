@@ -30,7 +30,7 @@ function createVisualiser({
 
   function visualize(audioElOrStream) {
     if (!audioCtx) {
-      audioCtx = new AudioContext();
+      audioCtx = AudioContext ? new AudioContext() : new webkitAudioContext();
     }
 
     let source;
