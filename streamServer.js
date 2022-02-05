@@ -10,6 +10,7 @@ const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
 const tracksController = require('./lib/controllers/tracks');
 
+const PORT = process.env.PORT || 9999;
 const metadataCache = [];
 
 const listenReqHandler = (_, res) => {
@@ -98,6 +99,6 @@ try {
   console.log('Error:', err);
 }
 
-server.listen(9999, '0.0.0.0', () => {
-  console.log('Server started! Listening to port 9999');
+server.listen(PORT, '0.0.0.0', () => {
+  console.log('Server started! Listening to port', PORT);
 });
