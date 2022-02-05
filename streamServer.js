@@ -6,6 +6,7 @@ const {
 } = require('fs');
 
 const http = require('http');
+const createWorker = require('./lib/media-persist-worker/worker');
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
 const tracksController = require('./lib/controllers/tracks');
@@ -44,12 +45,31 @@ const storeFileReqHandler = (req, res) => {
     const trackName = trackMetadata
       ? `${trackMetadata.trackName.replace(/\s/g, '-')}.ogg`
       : `unnamed-track-${Date.now()}.ogg`;
-
-    const trackWriter = createWriteStream(`./media/${trackName}`);
+    const pathToMediaFile = `./media/${trackName}`;
+    const trackWriter = createWriteStream(pathToMediaFile);
 
     trackWriter.on('error', (err) => {
       console.error('Error writing the track to file', err);
       trackMetadata && metadataCache.push(trackMetadata);
+    });
+
+    trackWriter.on('finish', async () => {
+      console.log('Finished creating track on local volume, persisting now');
+      const mediaPersistWorker = await createWorker({
+        pathToMediaFile
+      });
+
+      mediaPersistWorker.on('error', (err) => {
+        console.log('Worker job failed', err);
+      });
+      mediaPersistWorker.on('exit', () => {
+        console.log('Worker job is finished');
+      });
+
+      // Listen for messages from the worker and print them.
+      mediaPersistWorker.on('message', (msg) => {
+        console.log('Received message from worker', msg);
+      });
     });
 
     req.pipe(trackWriter);
