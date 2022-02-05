@@ -349,6 +349,11 @@
       }, 2000);
 
       const renderTracks = (tracks) => {
+        if (tracks.length === 0) {
+          tracksContainer.innerHTML = '<p>Sorry :( No tracks found</p>';
+          return;
+        }
+
         tracksContainer.innerHTML = '';
 
         const trackTemplate = document.getElementById('track-template');
@@ -404,6 +409,7 @@
 
         if (res.ok) {
           const { tracks } = await res.json();
+
           renderTracks(tracks);
         }
       };
