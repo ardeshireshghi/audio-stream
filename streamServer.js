@@ -73,11 +73,17 @@ const storeFileReqHandler = (req, res) => {
     });
 
     req.pipe(trackWriter);
+
+    trackWriter.on('error', () => {
+      res.end();
+    });
+
+    trackWriter.on('finish', () => {
+      res.end();
+    });
   } catch (err) {
     trackMetadata && metadataCache.push(trackMetadata);
   }
-
-  res.end();
 };
 
 const router = (req) => {
