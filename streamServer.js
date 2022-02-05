@@ -1,22 +1,88 @@
-const { createReadStream, openSync, closeSync } = require('fs');
+const {
+  createReadStream,
+  createWriteStream,
+  openSync,
+  closeSync
+} = require('fs');
 const http = require('http');
-
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
 
-const server = http.createServer(async (req, res) => {
+const metadataCache = [];
+
+const listenReqHandler = (_, res) => {
+  res.setHeader('content-type', 'text/html');
+  createReadStream('./static/listen.html').pipe(res);
+};
+
+const recordReqHandler = (_, res) => {
+  res.setHeader('content-type', 'text/html');
+  createReadStream('./static/index.html').pipe(res);
+};
+
+const staticAssetsHandler = (req, res) => {
+  createReadStream(`.${req.url}`).pipe(res);
+};
+
+const metadataReqHandler = (req, res) => {
+  req.on('data', (chunk) => {
+    metadataCache.push(JSON.parse(chunk));
+  });
+
+  req.on('end', () => {
+    res.end();
+  });
+};
+
+const storeFileReqHandler = (req, res) => {
+  const trackMetadata = metadataCache.shift();
+
+  try {
+    const trackName = trackMetadata
+      ? `${trackMetadata.trackName.replace(/\s/g, '-')}.ogg`
+      : `unnamed-track-${Date.now()}.ogg`;
+
+    const trackWriter = createWriteStream(`./media/${trackName}`);
+
+    trackWriter.on('error', (err) => {
+      console.error('Error writing the track to file', err);
+      trackMetadata && metadataCache.push(trackMetadata);
+    });
+
+    req.pipe(trackWriter);
+  } catch (err) {
+    trackMetadata && metadataCache.push(trackMetadata);
+  }
+
+  res.end();
+};
+
+const router = (req) => {
   if (req.url.includes('/upload')) {
-    uploadReqHandler(req, res);
-  } else if (req.url.includes('/stream')) {
-    await streamReqHandler(req, res);
-  } else if (req.url.includes('/listen')) {
-    res.setHeader('content-type', 'text/html');
-    createReadStream('./static/listen.html').pipe(res);
-  } else if (req.url === '/') {
-    res.setHeader('content-type', 'text/html');
-    createReadStream('./static/index.html').pipe(res);
+    return uploadReqHandler;
+  } else if (req.url.startsWith('/stream')) {
+    return streamReqHandler;
+  } else if (req.url.startsWith('/listen') || req.url === '/') {
+    return listenReqHandler;
+  } else if (req.url.startsWith('/record')) {
+    return recordReqHandler;
   } else if (req.url.startsWith('/static')) {
-    createReadStream(`.${req.url}`).pipe(res);
+    return staticAssetsHandler;
+  } else if (req.url.startsWith('/metadata')) {
+    return metadataReqHandler;
+  } else if (req.url.startsWith('/store')) {
+    return storeFileReqHandler;
+  }
+};
+
+const server = http.createServer(async (req, res) => {
+  const routeHandler = router(req, res);
+
+  if (routeHandler) {
+    await routeHandler(req, res);
+  } else {
+    res.statusCode = 404;
+    res.end();
   }
 });
 
