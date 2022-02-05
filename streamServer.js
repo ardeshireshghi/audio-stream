@@ -2,11 +2,14 @@ const {
   createReadStream,
   createWriteStream,
   openSync,
-  closeSync
+  closeSync,
+  F_OK
 } = require('fs');
+const { readdir, stat, access } = require('fs').promises;
 const http = require('http');
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
+const streamAudio = require('./lib/audio-streamer/streamAudio');
 
 const metadataCache = [];
 
@@ -57,6 +60,49 @@ const storeFileReqHandler = (req, res) => {
   res.end();
 };
 
+const tracksReqHandler = async (req, res) => {
+  let reqUrlSegments = req.url.split('/');
+  reqUrlSegments = reqUrlSegments.filter(Boolean);
+
+  const trackName = reqUrlSegments.length > 1 ? reqUrlSegments[1] : undefined;
+
+  if (!trackName) {
+    const trackFiles = await readdir('./media');
+    res.setHeader('content-type', 'application/json');
+
+    const tracks = await Promise.all(
+      trackFiles
+        .filter((file) => file.endsWith('.ogg'))
+        .map(async (file) => {
+          const { ctime: createdAt } = await stat(`./media/${file}`);
+          return {
+            name: file,
+            createdAt
+          };
+        })
+    );
+
+    res.end(
+      JSON.stringify({
+        tracks
+      })
+    );
+  } else {
+    try {
+      console.log(trackName);
+      await access(`./media/${trackName}`, F_OK);
+    } catch (err) {
+      res.statusCode = 404;
+      res.end();
+    }
+    await streamAudio({
+      audioFilePath: `./media/${trackName}`,
+      res,
+      range: req.headers.range
+    });
+  }
+};
+
 const router = (req) => {
   if (req.url.includes('/upload')) {
     return uploadReqHandler;
@@ -72,6 +118,8 @@ const router = (req) => {
     return metadataReqHandler;
   } else if (req.url.startsWith('/store')) {
     return storeFileReqHandler;
+  } else if (req.url.startsWith('/tracks') && req.method === 'GET') {
+    return tracksReqHandler;
   }
 };
 
