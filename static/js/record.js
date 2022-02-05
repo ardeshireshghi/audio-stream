@@ -22,6 +22,30 @@
     }
   });
 
+  function saveAudioToServer(name, audioBlob) {
+    const storageFileRequest = new XMLHttpRequest();
+    const fileMetadataRequest = new XMLHttpRequest();
+
+    fileMetadataRequest.open('POST', '/metadata', true);
+    storageFileRequest.open('POST', '/store', true);
+
+    storageFileRequest.onerror = (e) => {
+      console.log('Error sending the store request', storageFileRequest.err);
+    };
+
+    storageFileRequest.onload = (e) => {
+      console.log('File stored on the server', storageFileRequest.err);
+    };
+
+    fileMetadataRequest.setRequestHeader('Content-Type', 'application/json');
+    storageFileRequest.send(audioBlob);
+    fileMetadataRequest.send(
+      JSON.stringify({
+        trackName: name
+      })
+    );
+  }
+
   if (navigator.mediaDevices.getUserMedia) {
     console.log('getUserMedia supported.');
 
@@ -86,6 +110,8 @@
 
         audio.controls = true;
         const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
+
+        saveAudioToServer(clipName, blob);
 
         chunks = [];
         const audioURL = window.URL.createObjectURL(blob);
