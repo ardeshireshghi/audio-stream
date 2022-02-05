@@ -37,8 +37,11 @@
       console.log('File stored on the server', storageFileRequest.err);
     };
 
+    fileMetadataRequest.onload = () => {
+      storageFileRequest.send(audioBlob);
+    };
+
     fileMetadataRequest.setRequestHeader('Content-Type', 'application/json');
-    storageFileRequest.send(audioBlob);
     fileMetadataRequest.send(
       JSON.stringify({
         trackName: name
