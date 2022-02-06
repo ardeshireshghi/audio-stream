@@ -37,13 +37,12 @@
 
       .player {
         display: flex;
-        gap: 1rem;
-        justify-content: center;
+
         align-items: center;
         --player-button-bg: white;
         --player-button-bg-hover: #b3cad2d4;
         --player-button-box-shadow-color: white;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
       }
 
       .btn__player {
@@ -84,17 +83,29 @@
         margin: auto;
       }
 
+      .hero {
+        display: flex;
+        gap: 3rem;
+        justify-content: center;
+        align-items: center;
+        /* background: rgb(0 0 0 / 11%); */
+        border-radius: 30px;
+        padding: 1rem;
+        flex-wrap: wrap;
+      }
+
       .cover {
         background-image: url(https://about.me/cdn-cgi/image/q=40,dpr=2,f=auto,fit=cover,w=620,h=413.3333333333333,gravity=0.25x0.25/https://assets.about.me/background/users/a/r/d/ardi.eshghi_gmail.com_1478774301_45.jpg);
         background-position: center;
         background-repeat: no-repeat;
-        width: 400px;
-        height: 400px;
+        width: 350px;
+        height: 350px;
         background-size: cover;
         flex-grow: 0;
         flex-shrink: 0;
-        border-radius: 30px;
-        margin-bottom: 4rem;
+        border-radius: 50%;
+        margin-bottom: 0;
+        border: 10px solid white;
       }
 
       .content {
@@ -238,21 +249,22 @@
         }
 
         .btn-primary {
-          padding: 1rem 2rem;
+          padding: 1.5rem 2rem;
           font-size: 0.9rem;
           cursor: pointer;
         }
 
         .cover {
           height: 0px;
-          padding-top: 100%;
+          padding-top: 90%;
           margin-bottom: 2rem;
-          max-width: 100%;
+          max-width: 90%;
         }
 
         .title {
           font-size: 2rem;
           margin-bottom: 2rem;
+          text-align: center;
         }
 
         .title--medium {
@@ -260,13 +272,13 @@
         }
 
         .btn__player {
-          width: 50px;
-          height: 50px;
+          width: 60px;
+          height: 60px;
           padding: 5px;
         }
 
         .btn__player img {
-          width: 40px;
+          width: 50px;
         }
       }
     </style>
@@ -280,21 +292,25 @@
     </div>
     <div class="wrapper">
       <div class="content">
-        <div class="title">Listen to Ardi Radio</div>
-        <div class="cover"></div>
+        <div class="hero">
+          <div class="cover"></div>
+          <div style="display: flex; flex-direction: column">
+            <div class="title">
+              Hello!<br />
+              Listen to my Radio
+            </div>
+            <div class="player">
+              <button id="play" class="btn__player">
+                <img src="http://simpleicon.com/wp-content/uploads/play1.svg" />
+              </button>
+              <button class="js-tracks-btn btn-primary">View tracks</button>
+            </div>
+          </div>
+        </div>
+
         <audio id="player"></audio>
         <audio id="track-player"></audio>
         <canvas class="visualizer is-hidden" height="20px"></canvas>
-        <div class="player">
-          <button id="play" class="btn__player">
-            <img src="http://simpleicon.com/wp-content/uploads/play1.svg" />
-          </button>
-
-          <button id="pause" class="btn__player">
-            <img src="http://simpleicon.com/wp-content/uploads/pause.svg" />
-          </button>
-        </div>
-        <button class="js-tracks-btn btn-primary">Tracks</button>
       </div>
     </div>
     <script id="track-template" type="text/template">
@@ -339,7 +355,7 @@
         type: VisualizerType.MediaEl,
         canvasEl: canvas,
         styles: {
-          width: 400,
+          width: 800,
           lineColor: 'rgb(190 46 46 / 62%)'
         }
       });
@@ -441,24 +457,29 @@
         });
       };
 
-      document.getElementById('play').onclick = () => {
+      document.getElementById('play').onclick = (e) => {
         const audio = document.getElementById('player');
 
-        if (!audio.src) {
-          audio.src = `/stream?t=${Date.now()}`;
+        if (audio.paused) {
+          if (!audio.src) {
+            audio.src = `/stream?t=${Date.now()}`;
+          }
+
+          audio.play();
+          canvas.classList.remove('is-hidden');
+
+          if (!hasVisualiserStarted) {
+            visualizer.visualize(audio);
+            hasVisualiserStarted = true;
+          }
+
+          e.currentTarget.querySelector('img').src =
+            'http://simpleicon.com/wp-content/uploads/pause.svg';
+        } else {
+          audio.pause();
+          e.currentTarget.querySelector('img').src =
+            'http://simpleicon.com/wp-content/uploads/play1.svg';
         }
-
-        audio.play();
-        canvas.classList.remove('is-hidden');
-
-        if (!hasVisualiserStarted) {
-          visualizer.visualize(audio);
-          hasVisualiserStarted = true;
-        }
-      };
-
-      document.getElementById('pause').onclick = () => {
-        audio.pause();
       };
 
       viewTracksBtn.addEventListener('click', () => {
