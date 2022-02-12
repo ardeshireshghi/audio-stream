@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib/blob-store/export",
+    "allowJs": true,
+    "target": "es5"
+  },
+  "include": ["./lib/blob-store/src/**/*"],
+  "declaration": true
+}
