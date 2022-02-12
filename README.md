@@ -10,7 +10,13 @@ Run `yarn install`.
 
 ## Running the app
 
+1. Normally if you don't need media persistance you can just do `yarn start`
+
+2. If you want to persist the media
+
 ```sh
+$ export AWS_PROFILE="name-of-your-aws-profile"
+$ export MEDIA_PERSIST_S3_BUCKET_NAME="name-of-s3-bucket"
 $ yarn start
 ```
 
