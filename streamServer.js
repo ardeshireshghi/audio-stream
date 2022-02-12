@@ -4,9 +4,11 @@ const {
   openSync,
   closeSync
 } = require('fs');
-
 const http = require('http');
-const createWorker = require('./lib/media-persist-worker/worker');
+
+const { withBasicAuth } = require('./lib/middlewares/basicAuth');
+
+const createPersistWorker = require('./lib/media-persist-worker/worker');
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
 const tracksController = require('./lib/controllers/tracks');
@@ -19,10 +21,11 @@ const listenReqHandler = (_, res) => {
   createReadStream('./static/listen.html').pipe(res);
 };
 
-const recordReqHandler = (_, res) => {
+const recordReqHandler = withBasicAuth((_, res) => {
+  // Show record page
   res.setHeader('content-type', 'text/html');
   createReadStream('./static/index.html').pipe(res);
-};
+});
 
 const staticAssetsHandler = (req, res) => {
   createReadStream(`.${req.url}`).pipe(res);
@@ -55,7 +58,7 @@ const storeFileReqHandler = (req, res) => {
 
     trackWriter.on('finish', async () => {
       console.log('Finished creating track on local volume, persisting now');
-      const mediaPersistWorker = await createWorker({
+      const mediaPersistWorker = await createPersistWorker({
         pathToMediaFile
       });
 
