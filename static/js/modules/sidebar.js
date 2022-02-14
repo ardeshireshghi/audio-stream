@@ -16,7 +16,7 @@ const SidebarDirection = {
 };
 
 // Sidebar template (needs to be put in the html file or dynamically loaded)
-/* 
+/*
  <script id="sidebar-template" type="text/template">
       <div class="js-sidebar sidebar">
         <div class="sidebar__panel js-sidebar__panel">

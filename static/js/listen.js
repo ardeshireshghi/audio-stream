@@ -2,12 +2,15 @@
   const audio = document.getElementById('player');
   const trackAudioPlayer = document.getElementById('track-player');
   const canvas = document.querySelector('.visualizer');
-  const sidebar = document.querySelector('.js-sidebar');
-  const sidebarPanel = sidebar.querySelector('.js-sidebar__panel');
   const viewTracksBtn = document.querySelector('.js-tracks-btn');
-  const tracksContainer = document.querySelector('.js-tracks');
 
+  let tracksCollection = [];
+  let tracksContainer;
   let hasVisualiserStarted = false;
+
+  const sidebar = new Sidebar(
+    window.innerWidth <= 400 ? SidebarDirection.BOTTOM : SidebarDirection.LEFT
+  );
 
   const visualizer = createVisualiser({
     type: VisualizerType.MediaEl,
@@ -33,12 +36,24 @@
   }, 2000);
 
   const renderTracks = (tracks) => {
+    if (!tracksContainer) {
+      const sidebarContent = document.createElement('div');
+      sidebarContent.innerHTML =
+        '<div class="title title--center title--medium">Tracks</div>';
+
+      tracksContainer = document.createElement('div');
+      tracksContainer.className = 'tracks js-tracks';
+
+      sidebarContent.append(tracksContainer);
+      sidebar.renderContent(sidebarContent.children);
+    } else {
+      tracksContainer.innerHTML = '';
+    }
+
     if (tracks.length === 0) {
       tracksContainer.innerHTML = '<h3>Sorry :( No tracks found</h3>';
       return;
     }
-
-    tracksContainer.innerHTML = '';
 
     const trackTemplate = document.getElementById('track-template');
     const tempContainer = document.createElement('div');
@@ -90,7 +105,7 @@
 
     if (res.ok) {
       const { tracks } = await res.json();
-
+      tracksCollection = tracks;
       renderTracks(tracks);
     }
   };
@@ -138,27 +153,10 @@
   };
 
   viewTracksBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('sidebar--shown');
-    sidebarPanel.classList.remove('sidebar__panel--out-animation');
-    sidebarPanel.classList.add('sidebar__panel--in-animation');
-
-    loadTracks();
-  });
-
-  // Close sidebar event
-  sidebar.addEventListener('click', (event) => {
-    if (event.target !== sidebarPanel && event.target.contains(sidebarPanel)) {
-      sidebarPanel.classList.remove('sidebar__panel--in-animation');
-      sidebarPanel.classList.add('sidebar__panel--out-animation');
-      sidebarPanel.addEventListener(
-        'animationend',
-        () => {
-          sidebar.classList.toggle('sidebar--shown');
-        },
-        {
-          once: true
-        }
-      );
+    if (tracksCollection.length === 0) {
+      loadTracks();
     }
+
+    sidebar.show();
   });
 })(window.throttle);
