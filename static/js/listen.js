@@ -35,7 +35,7 @@
     );
   }, 2000);
 
-  const renderTracks = (tracks) => {
+  const renderTracks = async (tracks) => {
     if (!tracksContainer) {
       const sidebarContent = document.createElement('div');
       sidebarContent.innerHTML =
@@ -106,7 +106,7 @@
     if (res.ok) {
       const { tracks } = await res.json();
       tracksCollection = tracks;
-      renderTracks(tracks);
+      await renderTracks(tracks);
     }
   };
 
@@ -152,9 +152,9 @@
     }
   };
 
-  viewTracksBtn.addEventListener('click', () => {
+  viewTracksBtn.addEventListener('click', async () => {
     if (tracksCollection.length === 0) {
-      loadTracks();
+      await loadTracks();
     }
 
     sidebar.show();
