@@ -62,6 +62,10 @@ const Sidebar = (() => {
     }
 
     show() {
+      if (this.state.isShown) {
+        return;
+      }
+
       const { sidebarEl, sidebarPanelEl } = this.state;
 
       sidebarEl.classList.toggle(ClassNames.SIDEBAR_SHOWN);
@@ -78,6 +82,10 @@ const Sidebar = (() => {
     }
 
     hide() {
+      if (!this.state.isShown) {
+        return;
+      }
+
       const { sidebarEl, sidebarPanelEl } = this.state;
 
       sidebarPanelEl.classList.add(
