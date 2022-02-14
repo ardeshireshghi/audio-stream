@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node streamServer.js",
     "dev": "nodemon --ext 'ts,js,json' --watch ./lib --exec \"yarn build && yarn start\"",
-    "build": "tsc -d -p ."
+    "build": "tsc -d -p .",
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "aws-sdk": "^2.1073.0",
