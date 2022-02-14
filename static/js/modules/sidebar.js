@@ -16,17 +16,6 @@ const SidebarDirection = {
   TOP: 'top'
 };
 
-// Sidebar template (needs to be put in the html file or dynamically loaded)
-/*
- <script id="sidebar-template" type="text/template">
-      <div class="js-sidebar sidebar">
-        <div class="sidebar__panel js-sidebar__panel">
-          <!-- sidebar content goes here-->
-        </div>
-      </div>
-    </script>
-*/
-
 /**
  * Sidebar UI component
  * This depends on using the template which is documented above
@@ -115,9 +104,8 @@ const Sidebar = (() => {
         throw new Error('Document not ready, cannot access DOM');
       }
 
-      const template = document.getElementById(SIDEBAR_TEMPLATE_ID);
       const wrapper = document.createElement('div');
-      wrapper.innerHTML = template.textContent;
+      wrapper.innerHTML = this.template;
 
       const sidebarEl = wrapper.querySelector(`.${ClassNames.SIDEBAR}`);
       const sidebarPanelEl = wrapper.querySelector(
@@ -128,6 +116,7 @@ const Sidebar = (() => {
       );
 
       document.body.prepend(sidebarEl);
+      document.head.append(this._createSidebarStyles());
 
       this._updateState({
         templateRendered: true,
@@ -152,8 +141,216 @@ const Sidebar = (() => {
       });
     }
 
+    _createSidebarStyles() {
+      const style = document.createElement('style');
+      style.innerHTML = this.styles;
+      return style;
+    }
+
     _updateState(newPartialState) {
       this.state = { ...this.state, ...newPartialState };
+    }
+
+    get styles() {
+      return `
+      .sidebar {
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #41445c82;
+        display: none;
+      }
+
+      .sidebar--shown {
+        display: block;
+      }
+
+      .sidebar__panel {
+        background: white;
+        position: absolute;
+        padding: 2rem;
+        box-shadow: rgb(67 90 111 / 30%) 0px 0px 1px,
+          rgb(67 90 111 / 47%) 0px 16px 24px -8px;
+
+        transition: transform 0.25s ease;
+        will-change: transform;
+      }
+
+      .sidebar__panel--right {
+        transform: translateX(100%);
+        right: 0;
+        max-width: 90%;
+        height: 100%;
+      }
+
+      .sidebar__panel--bottom {
+        transform: translateY(100%);
+        bottom: 0;
+        max-height: 90%;
+        width: 100%;
+      }
+
+      .sidebar__panel--top {
+        transform: translateY(-100%);
+        top: 0;
+        max-height: 90%;
+        width: 100%;
+      }
+
+      .sidebar__panel--left {
+        transform: translateX(-100%);
+        left: 0;
+        max-width: 90%;
+        height: 100%;
+      }
+
+      .sidebar__panel--in-animation--right {
+        animation-duration: 0.35s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideInFromRight;
+      }
+
+      .sidebar__panel--out-animation--right {
+        animation-duration: 0.25s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideOutFromRight;
+      }
+
+      .sidebar__panel--in-animation--left {
+        animation-duration: 0.35s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideInFromLeft;
+      }
+
+      .sidebar__panel--out-animation--left {
+        animation-duration: 0.25s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideOutFromLeft;
+      }
+
+      .sidebar__panel--in-animation--bottom {
+        animation-duration: 0.35s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideInFromBottom;
+      }
+
+      .sidebar__panel--out-animation--bottom {
+        animation-duration: 0.25s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideOutFromBottom;
+      }
+
+      .sidebar__panel--in-animation--top {
+        animation-duration: 0.35s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideInFromTop;
+      }
+
+      .sidebar__panel--out-animation--top {
+        animation-duration: 0.25s;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        animation-name: slideOutFromTop;
+      }
+
+      @keyframes slideInFromRight {
+        0% {
+          transform: translateX(100%);
+        }
+
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideOutFromRight {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @keyframes slideInFromLeft {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideOutFromLeft {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      @keyframes slideInFromBottom {
+        0% {
+          transform: translateY(100%);
+        }
+
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideOutFromBottom {
+        0% {
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(100%);
+        }
+      }
+
+      @keyframes slideInFromTop {
+        0% {
+          transform: translateY(-100%);
+        }
+
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideOutFromTop {
+        0% {
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(-100%);
+        }
+      }
+      `;
+    }
+
+    get template() {
+      return `<div class="js-sidebar sidebar">
+        <div class="sidebar__panel js-sidebar__panel">
+          <!-- sidebar content goes here-->
+        </div>
+      </div>`;
     }
   }
 
