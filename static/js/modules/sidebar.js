@@ -12,7 +12,8 @@ const ClassNames = {
 const SidebarDirection = {
   LEFT: 'left',
   RIGHT: 'right',
-  BOTTOM: 'bottom'
+  BOTTOM: 'bottom',
+  TOP: 'top'
 };
 
 // Sidebar template (needs to be put in the html file or dynamically loaded)
