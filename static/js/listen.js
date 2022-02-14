@@ -8,9 +8,12 @@
   let tracksContainer;
   let hasVisualiserStarted = false;
 
-  const sidebar = new Sidebar(
-    window.innerWidth <= 400 ? SidebarDirection.BOTTOM : SidebarDirection.LEFT
-  );
+  const sidebar = new Sidebar({
+    direction:
+      window.innerWidth <= 400
+        ? Sidebar.direction.BOTTOM
+        : Sidebar.direction.LEFT
+  });
 
   const visualizer = createVisualiser({
     type: VisualizerType.MediaEl,

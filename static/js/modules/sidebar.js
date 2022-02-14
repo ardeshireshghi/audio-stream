@@ -1,29 +1,32 @@
-const SIDEBAR_TEMPLATE_ID = 'sidebar-template';
-
-const ClassNames = {
-  SIDEBAR: 'js-sidebar',
-  SIDEBAR_PANEL_JS: 'js-sidebar__panel',
-  SIDEBAR_PANEL: 'sidebar__panel',
-  SIDEBAR_SHOWN: 'sidebar--shown',
-  SIDEBAR_PANEL_BASE_ANIMATION_OUT: 'sidebar__panel--out-animation',
-  SIDEBAR_PANEL_BASE_ANIMATION_IN: 'sidebar__panel--in-animation'
-};
-
-const SidebarDirection = {
-  LEFT: 'left',
-  RIGHT: 'right',
-  BOTTOM: 'bottom',
-  TOP: 'top'
-};
-
 /**
  * Sidebar UI component
  * This depends on using the template which is documented above
  */
 const Sidebar = (() => {
+  const ClassNames = {
+    SIDEBAR: 'js-sidebar',
+    SIDEBAR_PANEL_JS: 'js-sidebar__panel',
+    SIDEBAR_PANEL: 'sidebar__panel',
+    SIDEBAR_SHOWN: 'sidebar--shown',
+    SIDEBAR_PANEL_BASE_ANIMATION_OUT: 'sidebar__panel--out-animation',
+    SIDEBAR_PANEL_BASE_ANIMATION_IN: 'sidebar__panel--in-animation'
+  };
+
+  const SidebarDirection = {
+    LEFT: 'left',
+    RIGHT: 'right',
+    BOTTOM: 'bottom',
+    TOP: 'top'
+  };
+
+  const SIDEBAR_DEFAULT_COLOR = 'white';
   class Sidebar {
-    constructor(direction = SidebarDirection.RIGHT) {
+    constructor({
+      direction = SidebarDirection.RIGHT,
+      color = SIDEBAR_DEFAULT_COLOR
+    } = {}) {
       this.direction = direction;
+      this.color = color;
       this.state = {
         templateRendered: false,
         sidebarEl: null,
@@ -31,6 +34,10 @@ const Sidebar = (() => {
       };
 
       this._renderTemplate();
+    }
+
+    static get direction() {
+      return SidebarDirection;
     }
 
     renderContent(elOrHTMLOrCollection) {
@@ -115,6 +122,9 @@ const Sidebar = (() => {
         `${ClassNames.SIDEBAR_PANEL}--${this.direction}`
       );
 
+      if (this.color) {
+        sidebarPanelEl.style.backgroundColor = this.color;
+      }
       document.body.prepend(sidebarEl);
       document.head.append(this._createSidebarStyles());
 
