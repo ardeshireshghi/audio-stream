@@ -194,6 +194,7 @@ const Sidebar = (() => {
         right: 0;
         max-width: 90%;
         height: 100%;
+        overflow: auto;
       }
 
       .sidebar__panel--bottom {
@@ -215,6 +216,7 @@ const Sidebar = (() => {
         left: 0;
         max-width: 90%;
         height: 100%;
+        overflow: auto;
       }
 
       .sidebar__panel--in-animation--right {
