@@ -51,7 +51,7 @@
     }
 
     if (tracks.length === 0) {
-      tracksContainer.innerHTML = '<h3>Sorry :( No tracks found</h3>';
+      tracksContainer.innerHTML = '<h3>Sorry 😞 No tracks found</h3>';
       return;
     }
 
