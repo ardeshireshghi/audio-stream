@@ -1,6 +1,5 @@
 /**
  * Sidebar UI component
- * This depends on using the template which is documented above
  */
 const Sidebar = (() => {
   const ClassNames = {
@@ -19,20 +18,23 @@ const Sidebar = (() => {
     TOP: 'top'
   };
 
-  const SIDEBAR_DEFAULT_COLOR = 'white';
   class Sidebar {
     constructor({
       direction = SidebarDirection.RIGHT,
-      color = SIDEBAR_DEFAULT_COLOR
+      customClassName = '',
+      panelStyles = {}
     } = {}) {
       this.direction = direction;
-      this.color = color;
+      this.customClassName = customClassName;
+      this.panelStyles = panelStyles;
+
       this.state = {
         templateRendered: false,
         sidebarEl: null,
         isShown: false
       };
-
+      this.id = `sidebar-panel-${Math.round(Math.random() * 10000000)}`;
+      this._insertStyles();
       this._renderTemplate();
     }
 
@@ -118,15 +120,17 @@ const Sidebar = (() => {
       const sidebarPanelEl = wrapper.querySelector(
         `.${ClassNames.SIDEBAR_PANEL_JS}`
       );
+      sidebarPanelEl.id = this.id;
       sidebarPanelEl.classList.add(
         `${ClassNames.SIDEBAR_PANEL}--${this.direction}`
       );
 
-      if (this.color) {
-        sidebarPanelEl.style.backgroundColor = this.color;
+      // Adds custom class name to the panel
+      if (this.customClassName !== '') {
+        sidebarPanelEl.classList.add(this.customClassName);
       }
+
       document.body.prepend(sidebarEl);
-      document.head.append(this._createSidebarStyles());
 
       this._updateState({
         templateRendered: true,
@@ -135,6 +139,23 @@ const Sidebar = (() => {
       });
 
       this._bindEvents();
+    }
+
+    _insertStyles() {
+      document.head.append(this._createSidebarStyles());
+
+      // Add custom styles if they are defined
+      if (Object.keys(this.panelStyles).length > 0) {
+        this._insertPanelCustomStyles();
+        return;
+      }
+    }
+
+    _insertPanelCustomStyles() {
+      insertCustomStyles(
+        `#${this.id}.${ClassNames.SIDEBAR_PANEL}`,
+        this.panelStyles
+      );
     }
 
     _bindEvents() {
@@ -178,10 +199,9 @@ const Sidebar = (() => {
         display: block;
       }
 
-      .sidebar__panel {
-        background: white;
+      #${this.id}.sidebar__panel {
+        background-color: white;
         position: absolute;
-        padding: 2rem;
         box-shadow: rgb(67 90 111 / 30%) 0px 0px 1px,
           rgb(67 90 111 / 47%) 0px 16px 24px -8px;
 
@@ -364,6 +384,63 @@ const Sidebar = (() => {
         </div>
       </div>`;
     }
+  }
+
+  /*
+  * Styles are objects of key values and they can have media
+  * queries as the keys
+  * 
+  * Example:
+  * 
+    {
+      backgroundColor: '#fefeff',
+      padding: '2rem',
+      '@media screen and (max-width: 400px)': {
+        padding: '1rem'
+      }
+    }
+  */
+  function insertCustomStyles(selector, styles) {
+    const customStyles = document.createElement('style');
+    document.head.appendChild(customStyles);
+
+    const styleSheet = customStyles.sheet;
+
+    Object.entries(styles).forEach(([ruleName, valueOrStyles]) => {
+      const ruleKababCase = ruleName.replace(/([A-Z])/g, (match) =>
+        `-${match}`.toLowerCase()
+      );
+
+      if (
+        ruleKababCase.startsWith('@media') &&
+        typeof valueOrStyles === 'object'
+      ) {
+        let rule = `
+            ${ruleKababCase} {
+              ${selector} {`;
+
+        rule = Object.keys(valueOrStyles).reduce((result, mediaRuleName) => {
+          const mediaRuleValue = valueOrStyles[mediaRuleName];
+          const mediaRuleNameKababCase = mediaRuleName.replace(
+            /([A-Z])/g,
+            (match) => `-${match}`.toLowerCase()
+          );
+
+          result += `${mediaRuleNameKababCase}: ${mediaRuleValue};\n`;
+          return result;
+        }, rule);
+
+        rule += `}
+          }`;
+
+        styleSheet.insertRule(rule, styleSheet.cssRules.length);
+      } else {
+        styleSheet.insertRule(
+          `${selector} { ${ruleKababCase}: ${valueOrStyles}}`,
+          styleSheet.cssRules.length
+        );
+      }
+    });
   }
 
   return Sidebar;
