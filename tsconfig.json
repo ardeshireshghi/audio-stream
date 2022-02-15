@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "./lib/blob-store/export",
+    "outDir": "./dist",
     "allowJs": true,
-    "target": "es5"
+    "target": "ES5",
+    "moduleResolution": "Node",
+    "esModuleInterop": true
   },
-  "include": ["./lib/blob-store/src/**/*"],
+
+  "include": ["**/*.ts"],
+  "exclude": ["static/**/*", "**/*.d.ts"],
   "declaration": true
 }

@@ -1,5 +1,5 @@
 import { ReadStream } from 'fs';
-import * as S3 from 'aws-sdk/clients/s3';
+import S3 from 'aws-sdk/clients/s3';
 
 export enum BlobStoreTypes {
   S3 = 's3'
