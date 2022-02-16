@@ -6,10 +6,11 @@ const createPersistWorker = require('../../../lib/media-persist-worker/worker');
 const streamReqHandler = require('../../../lib/streamRequestHandler');
 const uploadReqHandler = require('../../../lib/uploadRequestHandler');
 const createTracksController = require('../../interface-adapters/controllers/tracksController');
-
 const {
   default: services
 } = require('../../../dist/app/infrastructure/services');
+
+const tracksController = createTracksController(services.trackService);
 
 const staticAssetsPath = path.resolve(__dirname + '/../../../static');
 const metadataCache = [];
@@ -104,7 +105,7 @@ const getRouteByUrl = (req) => {
   } else if (req.url.startsWith('/store')) {
     return storeFileReqHandler;
   } else if (req.url.startsWith('/tracks') && req.method === 'GET') {
-    return createTracksController(services.trackService);
+    return tracksController;
   }
 };
 
