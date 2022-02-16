@@ -1,3 +1,3 @@
 export default class Track {
-  constructor(public name: string, createdAt: Date) {}
+  constructor(public name: string, public createdAt: Date) {}
 }

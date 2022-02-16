@@ -60,17 +60,16 @@ export class TrackBlobStoreService implements TrackService {
     }
   }
   async findAll(): Promise<Track[] | void> {
-    const trackFiles = await readdir('./media');
+    const trackFiles = await this.blobStoreClient.getFiles();
 
-    const tracks = await Promise.all(
-      trackFiles
-        .filter((file) => file.endsWith('.ogg'))
-        .map(async (file) => {
-          const { ctime: createdAt } = await stat(`./media/${file}`);
-          return new Track(file, createdAt);
-        })
-    );
+    if (trackFiles) {
+      const filesMappedToTracks = trackFiles.map(
+        (file) => new Track(file.name, file.lastModified)
+      );
 
-    return tracks;
+      return Promise.resolve(filesMappedToTracks);
+    }
+
+    return;
   }
 }

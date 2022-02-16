@@ -16,6 +16,7 @@ export interface File {
   name: string;
   data?: ReadStream | Readable | Buffer;
   size?: number;
+  lastModified?: Date;
 }
 
 export type BlobStoreResponse = any;
@@ -23,7 +24,7 @@ export type BlobStoreResponse = any;
 export interface BlobStoreClient {
   uploadFile(file: File): Promise<BlobStoreResponse>;
   getFile(key: string, range?: string): Promise<File | void>;
-  getFiles(keyPrefix: string): Promise<File[] | void>;
+  getFiles(): Promise<File[] | void>;
 }
 
 type S3ClientParams = [bucketName: string, keyPrefix?: string, client?: S3];
@@ -64,11 +65,25 @@ class S3BlobStoreClient implements BlobStoreClient {
 
     return {
       name: fileName,
-      data: response.Body,
+      data: response.Body as Buffer,
       size: response.ContentLength
     };
   }
-  async getFiles(keyPrefix: string): Promise<void | File[]> {}
+  async getFiles(): Promise<void | File[]> {
+    const params = {
+      Bucket: this.bucketName,
+      Prefix: this.keyPrefix
+    };
+
+    const response = await this.client.listObjects(params).promise();
+
+    return response.Contents.map((file) => {
+      return {
+        name: file.Key.replace(this.keyPrefix, ''),
+        lastModified: new Date(file.LastModified)
+      };
+    });
+  }
 }
 
 const blobStoreClientTypeMap = {
