@@ -1,4 +1,5 @@
 import { ReadStream } from 'fs';
+import { Readable } from 'stream';
 import S3 from 'aws-sdk/clients/s3';
 
 export enum BlobStoreTypes {
@@ -13,14 +14,15 @@ function createS3Client() {
 
 export interface File {
   name: string;
-  data?: ReadStream | Buffer;
+  data?: ReadStream | Readable | Buffer;
+  size?: number;
 }
 
 export type BlobStoreResponse = any;
 
-interface BlobStoreClient {
+export interface BlobStoreClient {
   uploadFile(file: File): Promise<BlobStoreResponse>;
-  getFile(key: string): Promise<File | void>;
+  getFile(key: string, range?: string): Promise<File | void>;
   getFiles(keyPrefix: string): Promise<File[] | void>;
 }
 
@@ -32,6 +34,7 @@ class S3BlobStoreClient implements BlobStoreClient {
     public keyPrefix: string = '',
     public client: S3 = createS3Client()
   ) {}
+
   async uploadFile(file: File): Promise<BlobStoreResponse> {
     const params = {
       Bucket: this.bucketName,
@@ -42,7 +45,29 @@ class S3BlobStoreClient implements BlobStoreClient {
     const data = await this.client.upload(params).promise();
     return data;
   }
-  async getFile(key: string): Promise<void | File> {}
+
+  async getFile(fileName: string, range?: string): Promise<void | File> {
+    let params = {
+      Bucket: this.bucketName,
+      Key: this.keyPrefix + fileName
+    };
+
+    if (range) {
+      params['Range'] = range;
+    }
+
+    const object = this.client.getObject(params);
+    const response = await object.promise();
+
+    // TODO: Fix the stream issue
+    // const stream = object.createReadStream();
+
+    return {
+      name: fileName,
+      data: response.Body,
+      size: response.ContentLength
+    };
+  }
   async getFiles(keyPrefix: string): Promise<void | File[]> {}
 }
 
