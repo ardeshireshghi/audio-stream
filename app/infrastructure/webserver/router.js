@@ -1,7 +1,7 @@
 const path = require('path');
 const { createReadStream, createWriteStream } = require('fs');
 
-const { withBasicAuth } = require('../../../lib/middlewares/basicAuth');
+const { withBasicAuth } = require('./middlewares/basicAuth');
 const createPersistWorker = require('../../../lib/media-persist-worker/worker');
 const streamReqHandler = require('../../../lib/streamRequestHandler');
 const uploadReqHandler = require('../../../lib/uploadRequestHandler');
