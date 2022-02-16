@@ -2,9 +2,9 @@ import createBlobStoreClient, {
   BlobStoreClient,
   BlobStoreTypes
 } from '../../lib/blob-store/src/BlobStoreClient';
-import { TrackBlobStoreService } from '../interfaces/services/TrackBlobStoreService';
-import { TrackFileSystemService } from '../interfaces/services/TrackFileSystemService';
-import { TrackService } from '../interfaces/services/TrackService';
+import { TrackBlobStoreService } from '../interface-adapters/services/TrackBlobStoreService';
+import { TrackFileSystemService } from '../interface-adapters/services/TrackFileSystemService';
+import { TrackService } from '../interface-adapters/services/TrackService';
 
 type Services = {
   blobStoreClient: BlobStoreClient;

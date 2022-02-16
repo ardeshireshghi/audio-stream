@@ -11,7 +11,8 @@ const { withBasicAuth } = require('./lib/middlewares/basicAuth');
 const createPersistWorker = require('./lib/media-persist-worker/worker');
 const streamReqHandler = require('./lib/streamRequestHandler');
 const uploadReqHandler = require('./lib/uploadRequestHandler');
-const tracksController = require('./lib/controllers/tracks');
+const createTracksController = require('./app/interface-adapters/controllers/tracksController');
+const { default: services } = require('./dist/app/infrastructure/services');
 
 const PORT = process.env.PORT || 9999;
 const metadataCache = [];
@@ -90,6 +91,7 @@ const storeFileReqHandler = (req, res) => {
 };
 
 const router = (req) => {
+  // TODO: Move handlers to controllers
   if (req.url.includes('/upload')) {
     return uploadReqHandler;
   } else if (req.url.startsWith('/stream')) {
@@ -105,7 +107,7 @@ const router = (req) => {
   } else if (req.url.startsWith('/store')) {
     return storeFileReqHandler;
   } else if (req.url.startsWith('/tracks') && req.method === 'GET') {
-    return tracksController;
+    return createTracksController(services.trackService);
   }
 };
 
