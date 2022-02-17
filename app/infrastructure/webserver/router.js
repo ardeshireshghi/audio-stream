@@ -88,23 +88,23 @@ const storeFileReqHandler = (req, res) => {
   }
 };
 
-const getRouteByUrl = (req) => {
+const getRouteByUrl = (url) => {
   // TODO: Move handlers to controllers
-  if (req.url.includes('/upload')) {
+  if (url.includes('/upload')) {
     return uploadReqHandler;
-  } else if (req.url.startsWith('/stream')) {
+  } else if (url.startsWith('/stream')) {
     return streamReqHandler;
-  } else if (req.url.startsWith('/listen') || req.url === '/') {
+  } else if (url.startsWith('/listen') || url === '/') {
     return listenReqHandler;
-  } else if (req.url.startsWith('/record')) {
+  } else if (url.startsWith('/record')) {
     return recordReqHandler;
-  } else if (req.url.startsWith('/static')) {
+  } else if (url.startsWith('/static')) {
     return staticAssetsHandler;
-  } else if (req.url.startsWith('/metadata')) {
+  } else if (url.startsWith('/metadata')) {
     return metadataReqHandler;
-  } else if (req.url.startsWith('/store')) {
+  } else if (url.startsWith('/store')) {
     return storeFileReqHandler;
-  } else if (req.url.startsWith('/tracks') && req.method === 'GET') {
+  } else if (url.startsWith('/tracks')) {
     return tracksController;
   }
 };

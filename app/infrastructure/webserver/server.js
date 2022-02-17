@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 9999;
 
 function createServer() {
   const server = http.createServer(async (req, res) => {
-    const routeHandler = getRouteByUrl(req, res);
+    const routeHandler = getRouteByUrl(req.url);
 
     if (routeHandler) {
       await routeHandler(req, res);
