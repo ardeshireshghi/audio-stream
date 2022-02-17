@@ -6,6 +6,8 @@ const createPersistWorker = require('../../../lib/media-persist-worker/worker');
 const streamReqHandler = require('../../../lib/streamRequestHandler');
 const uploadReqHandler = require('../../../lib/uploadRequestHandler');
 const createTracksController = require('../../interface-adapters/controllers/tracksController');
+const notFoundHandler = require('./routes/notfound');
+
 const {
   default: services
 } = require('../../../dist/app/infrastructure/services');
@@ -106,6 +108,8 @@ const getRouteByUrl = (url) => {
     return storeFileReqHandler;
   } else if (url.startsWith('/tracks')) {
     return tracksController;
+  } else {
+    return notFoundHandler;
   }
 };
 

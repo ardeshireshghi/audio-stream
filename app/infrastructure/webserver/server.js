@@ -4,16 +4,9 @@ const { default: getRouteByUrl } = require('./router');
 const PORT = process.env.PORT || 9999;
 
 function createServer() {
-  const server = http.createServer(async (req, res) => {
-    const routeHandler = getRouteByUrl(req.url);
-
-    if (routeHandler) {
-      await routeHandler(req, res);
-    } else {
-      res.statusCode = 404;
-      res.end();
-    }
-  });
+  const server = http.createServer(async (req, res) =>
+    getRouteByUrl(req.url)(req, res)
+  );
 
   return {
     start() {
