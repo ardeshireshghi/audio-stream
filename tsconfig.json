@@ -8,6 +8,6 @@
   },
 
   "include": ["**/*.ts"],
-  "exclude": ["static/**/*", "**/*.d.ts"],
+  "exclude": ["static/**/*", "modules/**/*", "**/*.d.ts"],
   "declaration": true
 }
