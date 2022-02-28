@@ -2,7 +2,6 @@ const path = require('path');
 const { createReadStream, createWriteStream } = require('fs');
 
 const { withBasicAuth } = require('./middlewares/basicAuth');
-const createPersistWorker = require('../../../lib/media-persist-worker/worker');
 const streamReqHandler = require('../../../lib/streamRequestHandler');
 const uploadReqHandler = require('../../../lib/uploadRequestHandler');
 const createTracksController = require('../../interface-adapters/controllers/tracksController');
@@ -12,10 +11,18 @@ const {
   default: services
 } = require('../../../dist/app/infrastructure/services');
 
+const {
+  WorkerPool
+} = require('../../../dist/lib/media-persist-worker/WorkerPool');
 const tracksController = createTracksController(services.trackService);
 
 const staticAssetsPath = path.resolve(__dirname + '/../../../static');
 const metadataCache = [];
+
+const mediaPersistWorkerPool = new WorkerPool({
+  size: 20,
+  taskPath: './lib/media-persist-worker/worker.js'
+});
 
 const listenReqHandler = (_, res) => {
   res.setHeader('content-type', 'text/html');
@@ -59,21 +66,18 @@ const storeFileReqHandler = (req, res) => {
 
     trackWriter.on('finish', async () => {
       console.log('Finished creating track on local volume, persisting now');
-      const mediaPersistWorker = await createPersistWorker({
-        pathToMediaFile
-      });
+      // const mediaPersistWorker = await createPersistWorker({
+      //   pathToMediaFile
+      // });
 
-      mediaPersistWorker.on('error', (err) => {
+      try {
+        const message = await mediaPersistWorkerPool.run({
+          pathToMediaFile
+        });
+        console.log('Received message from worker', message);
+      } catch (err) {
         console.log('Worker job failed', err);
-      });
-      mediaPersistWorker.on('exit', () => {
-        console.log('Worker job is finished');
-      });
-
-      // Listen for messages from the worker and print them.
-      mediaPersistWorker.on('message', (msg) => {
-        console.log('Received message from worker', msg);
-      });
+      }
     });
 
     req.pipe(trackWriter);
