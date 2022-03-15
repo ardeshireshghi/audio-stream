@@ -6,16 +6,18 @@ const streamReqHandler = require('../../../lib/streamRequestHandler');
 const uploadReqHandler = require('../../../lib/uploadRequestHandler');
 const createTracksController = require('../../interface-adapters/controllers/tracksController');
 const notFoundHandler = require('./routes/notfound');
-
 const {
   default: services
 } = require('../../../dist/app/infrastructure/services');
-
 const {
   WorkerPool
 } = require('../../../dist/lib/media-persist-worker/WorkerPool');
-const tracksController = createTracksController(services.trackService);
 
+const {
+  default: trackMetadataQueue
+} = require('../../../dist/app/interface-adapters/services/TrackMetadataQueue');
+
+const tracksController = createTracksController(services.trackService);
 const staticAssetsPath = path.resolve(__dirname + '/../../../static');
 const metadataCache = [];
 
@@ -41,7 +43,7 @@ const staticAssetsHandler = (req, res) => {
 
 const metadataReqHandler = (req, res) => {
   req.on('data', (chunk) => {
-    metadataCache.push(JSON.parse(chunk));
+    trackMetadataQueue.enqueue(JSON.parse(chunk));
   });
 
   req.on('end', () => {
@@ -50,7 +52,7 @@ const metadataReqHandler = (req, res) => {
 };
 
 const storeFileReqHandler = (req, res) => {
-  const trackMetadata = metadataCache.shift();
+  const trackMetadata = trackMetadataQueue.dequeue();
 
   try {
     const trackName = trackMetadata
@@ -61,7 +63,8 @@ const storeFileReqHandler = (req, res) => {
 
     trackWriter.on('error', (err) => {
       console.error('Error writing the track to file', err);
-      trackMetadata && metadataCache.push(trackMetadata);
+
+      trackMetadata && trackMetadataQueue.enqueue(trackMetadata);
     });
 
     trackWriter.on('finish', async () => {
@@ -87,7 +90,8 @@ const storeFileReqHandler = (req, res) => {
       res.end();
     });
   } catch (err) {
-    trackMetadata && metadataCache.push(trackMetadata);
+    console.error('Error storing file', err);
+    trackMetadata && trackMetadataQueue.enqueue(trackMetadata);
   }
 };
 
