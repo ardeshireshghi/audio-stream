@@ -322,8 +322,11 @@
     <script src="static/js/utils/throttle.js" defer></script>
     <script src="static/js/listen.js" defer></script>
     <script>
-      window.addEventListener('load', () => {
-        setTimeout(() => document.querySelector('.js-loader').classList.add('loader--is-hidden'), 400);
+      window.addEventListener('DOMContentLoaded', () => {
+        // BAD intentional UX
+        const INTENTIONAL_DELAY_MS = 400;
+
+        setTimeout(() => document.querySelector('.js-loader').classList.add('loader--is-hidden'), INTENTIONAL_DELAY_MS);
       })
     </script>
   </body>
