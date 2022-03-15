@@ -39,6 +39,10 @@ export class TrackFileSystemService implements TrackService {
         })
     );
 
-    return tracks;
+    const sortedTracks = tracks.sort((a, b) => {
+      return a.createdAt > b.createdAt ? -1 : 1;
+    });
+
+    return sortedTracks;
   }
 }
