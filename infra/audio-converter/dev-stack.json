@@ -1,0 +1,244 @@
+{
+  "version": 3,
+  "deployment": {
+    "manifest": {
+      "time": "2022-03-15T02:12:47.738181Z",
+      "magic": "c3514971eaf9592813f3d0aa3c0a2d883e71c07859d24404bc9a7376269a48c7",
+      "version": "v3.25.1"
+    },
+    "secrets_providers": {
+      "type": "service",
+      "state": {
+        "url": "https://api.pulumi.com",
+        "owner": "ardeshireshghi",
+        "project": "converter",
+        "stack": "dev"
+      }
+    },
+    "resources": [
+      {
+        "urn": "urn:pulumi:dev::converter::pulumi:pulumi:Stack::converter-dev",
+        "custom": false,
+        "type": "pulumi:pulumi:Stack",
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::awsx:ecr:Repository::converterApp",
+        "custom": false,
+        "type": "awsx:ecr:Repository",
+        "parent": "urn:pulumi:dev::converter::pulumi:pulumi:Stack::converter-dev",
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1",
+        "custom": true,
+        "id": "b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "type": "pulumi:providers:aws",
+        "inputs": {
+          "region": "eu-west-1",
+          "version": "4.38.1"
+        },
+        "outputs": {
+          "region": "eu-west-1",
+          "version": "4.38.1"
+        },
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::aws:iam/role:Role::lambdaRole",
+        "custom": true,
+        "id": "lambdaRole-44b229b",
+        "type": "aws:iam/role:Role",
+        "inputs": {
+          "__defaults": [
+            "forceDetachPolicies",
+            "maxSessionDuration",
+            "name",
+            "path"
+          ],
+          "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
+          "forceDetachPolicies": false,
+          "maxSessionDuration": 3600,
+          "name": "lambdaRole-44b229b",
+          "path": "/"
+        },
+        "outputs": {
+          "arn": "arn:aws:iam::105389275376:role/lambdaRole-44b229b",
+          "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowAssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}",
+          "createDate": "2022-03-15T01:59:59Z",
+          "description": "",
+          "forceDetachPolicies": false,
+          "id": "lambdaRole-44b229b",
+          "inlinePolicies": [
+            {
+              "name": "",
+              "policy": ""
+            }
+          ],
+          "managedPolicyArns": [],
+          "maxSessionDuration": 3600,
+          "name": "lambdaRole-44b229b",
+          "namePrefix": "",
+          "path": "/",
+          "tags": {},
+          "tagsAll": {},
+          "uniqueId": "AROARRCNQXDYE543N6MDZ"
+        },
+        "parent": "urn:pulumi:dev::converter::pulumi:pulumi:Stack::converter-dev",
+        "provider": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1::b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "propertyDependencies": {
+          "assumeRolePolicy": null
+        },
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::awsx:ecr:Repository$aws:ecr/repository:Repository::converterapp",
+        "custom": true,
+        "id": "converterapp-f514319",
+        "type": "aws:ecr/repository:Repository",
+        "inputs": {
+          "__defaults": ["imageTagMutability", "name"],
+          "imageTagMutability": "MUTABLE",
+          "name": "converterapp-f514319"
+        },
+        "outputs": {
+          "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"delete\":1200000000000}}",
+          "arn": "arn:aws:ecr:eu-west-1:105389275376:repository/converterapp-f514319",
+          "encryptionConfigurations": [
+            {
+              "encryptionType": "AES256",
+              "kmsKey": ""
+            }
+          ],
+          "id": "converterapp-f514319",
+          "imageScanningConfiguration": {
+            "scanOnPush": false
+          },
+          "imageTagMutability": "MUTABLE",
+          "name": "converterapp-f514319",
+          "registryId": "105389275376",
+          "repositoryUrl": "105389275376.dkr.ecr.eu-west-1.amazonaws.com/converterapp-f514319",
+          "tags": {},
+          "tagsAll": {}
+        },
+        "parent": "urn:pulumi:dev::converter::awsx:ecr:Repository::converterApp",
+        "provider": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1::b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::awsx:ecr:Repository$aws:ecr/lifecyclePolicy:LifecyclePolicy::converterapp",
+        "custom": true,
+        "id": "converterapp-f514319",
+        "type": "aws:ecr/lifecyclePolicy:LifecyclePolicy",
+        "inputs": {
+          "__defaults": [],
+          "policy": "{\"rules\":[{\"rulePriority\":1,\"description\":\"remove untagged images\",\"selection\":{\"tagStatus\":\"untagged\",\"countType\":\"imageCountMoreThan\",\"countNumber\":1},\"action\":{\"type\":\"expire\"}}]}",
+          "repository": "converterapp-f514319"
+        },
+        "outputs": {
+          "id": "converterapp-f514319",
+          "policy": "{\"rules\":[{\"action\":{\"type\":\"expire\"},\"description\":\"remove untagged images\",\"rulePriority\":1,\"selection\":{\"countNumber\":1,\"countType\":\"imageCountMoreThan\",\"tagStatus\":\"untagged\"}}]}",
+          "registryId": "105389275376",
+          "repository": "converterapp-f514319"
+        },
+        "parent": "urn:pulumi:dev::converter::awsx:ecr:Repository::converterApp",
+        "dependencies": [
+          "urn:pulumi:dev::converter::awsx:ecr:Repository$aws:ecr/repository:Repository::converterapp"
+        ],
+        "provider": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1::b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "propertyDependencies": {
+          "policy": null,
+          "repository": [
+            "urn:pulumi:dev::converter::awsx:ecr:Repository$aws:ecr/repository:Repository::converterapp"
+          ]
+        },
+        "aliases": [
+          "urn:pulumi:dev::converter::awsx:ecr:Repository$aws:ecr/lifecyclePolicy:LifecyclePolicy::converterapp"
+        ],
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::aws:iam/rolePolicyAttachment:RolePolicyAttachment::lambdaFullAccess",
+        "custom": true,
+        "id": "lambdaRole-44b229b-20220315020345893900000001",
+        "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+        "inputs": {
+          "__defaults": [],
+          "policyArn": "arn:aws:iam::aws:policy/AWSLambda_FullAccess",
+          "role": "lambdaRole-44b229b"
+        },
+        "outputs": {
+          "id": "lambdaRole-44b229b-20220315020345893900000001",
+          "policyArn": "arn:aws:iam::aws:policy/AWSLambda_FullAccess",
+          "role": "lambdaRole-44b229b"
+        },
+        "parent": "urn:pulumi:dev::converter::pulumi:pulumi:Stack::converter-dev",
+        "dependencies": [
+          "urn:pulumi:dev::converter::aws:iam/role:Role::lambdaRole"
+        ],
+        "provider": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1::b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "propertyDependencies": {
+          "policyArn": null,
+          "role": ["urn:pulumi:dev::converter::aws:iam/role:Role::lambdaRole"]
+        },
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::aws:s3/bucket:Bucket::dev-audio-stream-blob-storage",
+        "custom": true,
+        "id": "dev-audio-stream-blob-storage",
+        "type": "aws:s3/bucket:Bucket",
+        "inputs": {
+          "__defaults": ["acl", "forceDestroy"],
+          "acl": "private",
+          "bucket": "dev-audio-stream-blob-storage",
+          "forceDestroy": false
+        },
+        "outputs": {
+          "accelerationStatus": "",
+          "acl": "private",
+          "arn": "arn:aws:s3:::dev-audio-stream-blob-storage",
+          "bucket": "dev-audio-stream-blob-storage",
+          "bucketDomainName": "dev-audio-stream-blob-storage.s3.amazonaws.com",
+          "bucketRegionalDomainName": "dev-audio-stream-blob-storage.s3.eu-west-1.amazonaws.com",
+          "corsRules": [],
+          "forceDestroy": false,
+          "grants": [],
+          "hostedZoneId": "Z1BKCTXD74EZPE",
+          "id": "dev-audio-stream-blob-storage",
+          "lifecycleRules": [],
+          "loggings": [],
+          "objectLockConfiguration": null,
+          "region": "eu-west-1",
+          "replicationConfiguration": null,
+          "requestPayer": "BucketOwner",
+          "serverSideEncryptionConfiguration": null,
+          "tags": {},
+          "tagsAll": {},
+          "versioning": {
+            "enabled": false,
+            "mfaDelete": false
+          },
+          "website": null
+        },
+        "parent": "urn:pulumi:dev::converter::pulumi:pulumi:Stack::converter-dev",
+        "provider": "urn:pulumi:dev::converter::pulumi:providers:aws::default_4_38_1::b5bfece7-2f8d-4896-99fe-d3a400e83fda",
+        "propertyDependencies": {
+          "bucket": null
+        },
+        "sequenceNumber": 1
+      },
+      {
+        "urn": "urn:pulumi:dev::converter::aws:s3/bucket:Bucket$aws:s3:BucketEventSubscription::assetsEncodeHandler",
+        "custom": false,
+        "type": "aws:s3:BucketEventSubscription",
+        "parent": "urn:pulumi:dev::converter::aws:s3/bucket:Bucket::dev-audio-stream-blob-storage",
+        "aliases": [
+          "urn:pulumi:dev::converter::aws:s3:BucketEventSubscription::assetsEncodeHandler"
+        ],
+        "sequenceNumber": 1
+      }
+    ],
+    "pending_operations": []
+  }
+}

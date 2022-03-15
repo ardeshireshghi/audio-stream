@@ -1,0 +1,15 @@
+{
+  "name": "audio-converter",
+  "devDependencies": {
+    "typescript": "^3.4.5",
+    "@types/node": "latest"
+  },
+  "dependencies": {
+    "@pulumi/pulumi": "latest",
+    "@pulumi/aws": "latest",
+    "@pulumi/awsx": "latest"
+  },
+  "scripts": {
+    "deploy": "pulumi up"
+  }
+}
