@@ -66,9 +66,6 @@ const storeFileReqHandler = (req, res) => {
 
     trackWriter.on('finish', async () => {
       console.log('Finished creating track on local volume, persisting now');
-      // const mediaPersistWorker = await createPersistWorker({
-      //   pathToMediaFile
-      // });
 
       try {
         const message = await mediaPersistWorkerPool.run({

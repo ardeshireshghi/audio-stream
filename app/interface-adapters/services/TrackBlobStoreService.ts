@@ -63,11 +63,13 @@ export class TrackBlobStoreService implements TrackService {
     const trackFiles = await this.blobStoreClient.getFiles();
 
     if (trackFiles) {
-      const filesMappedToTracks = trackFiles.map(
-        (file) => new Track(file.name, file.lastModified)
-      );
-
-      return Promise.resolve(filesMappedToTracks);
+      const filesMappedToTracks = trackFiles
+        .filter((file) => file.name.includes('.mp3'))
+        .map((file) => new Track(file.name, file.lastModified));
+      const sortedTracks = filesMappedToTracks.sort((a, b) => {
+        return a.createdAt > b.createdAt ? -1 : 1;
+      });
+      return Promise.resolve(sortedTracks);
     }
 
     return;
