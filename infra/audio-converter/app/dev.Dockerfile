@@ -5,7 +5,7 @@ RUN yum update -y
 RUN yum install -y tar xz vim
 
 RUN mkdir -p /usr/local/bin/ffmpeg
-RUN curl -f -o /tmp/ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+RUN curl -f -o /tmp/ffmpeg.tar.xz https://raw.githubusercontent.com/ardeshireshghi/audio-stream/main/infra/audio-converter/ffmpeg/ffmpeg.tar.xz
 RUN cd /tmp && unxz /tmp/ffmpeg.tar.xz
 RUN cd /tmp && tar -xf /tmp/ffmpeg.tar 
 RUN cd /tmp && cp -a $(ls -d ffmpeg* | head -1)/* /usr/local/bin/ffmpeg
