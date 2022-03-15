@@ -18,7 +18,7 @@ const {
 } = require('../../../dist/app/interface-adapters/services/TrackMetadataQueue');
 
 const tracksController = createTracksController(services.trackService);
-const staticAssetsPath = path.resolve(__dirname + '/../../../static');
+const staticAssetsPath = path.resolve(__dirname + '/../../../ui');
 const metadataCache = [];
 
 const mediaPersistWorkerPool = new WorkerPool({
@@ -38,7 +38,7 @@ const recordReqHandler = withBasicAuth((_, res) => {
 });
 
 const staticAssetsHandler = (req, res) => {
-  createReadStream(`.${req.url}`).pipe(res);
+  createReadStream(`.${req.url.replace('static', 'ui')}`).pipe(res);
 };
 
 const metadataReqHandler = (req, res) => {
