@@ -1,3 +1,0 @@
-[submodule "path_to_submodule"] 
-  path = modules/sidebar
-  url = git://github.com/ardeshireshghi/vanilla-js-sidebar.git
