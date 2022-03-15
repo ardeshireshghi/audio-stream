@@ -13,11 +13,13 @@ const role = new aws.iam.Role('lambdaRole', {
   })
 });
 
+// TODO: Harden these policies
 new aws.iam.RolePolicyAttachment('lambdaFullAccess', {
   role: role.name,
   policyArn: aws.iam.ManagedPolicy.LambdaFullAccess
 });
 
+// TODO: Harden these policies
 new aws.iam.RolePolicyAttachment('lambdaFullS3Access', {
   role: role.name,
   policyArn: aws.iam.ManagedPolicy.AmazonS3FullAccess
