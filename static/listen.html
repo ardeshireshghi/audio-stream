@@ -8,6 +8,7 @@
     />
     <title>Ardi Radio and tracks</title>
     <link href="/static/styles/app.css" rel="stylesheet" type="text/css" />
+    <link href="/static/styles/load-awesome.css" rel="stylesheet" type="text/css" />
 
     <style>
       :root {
@@ -192,6 +193,24 @@
         text-align: center;
       }
 
+      .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgb(255 255 255 / 90%);
+        height: 100%;
+        width: 100%;
+        z-index: 100;
+        display: flex;
+        margin: auto;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loader--is-hidden {
+        display: none;
+      }
+
       @media screen and (max-width: 400px) {
         .btn__player {
           width: 50px;
@@ -250,8 +269,18 @@
         }
       }
     </style>
+
   </head>
   <body>
+    <div class="loader js-loader">
+      <div class="la-line-scale-pulse-out-rapid la-dark la-2x">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <div class="wrapper">
       <div class="content">
         <div class="hero">
@@ -292,5 +321,10 @@
     <script src="static/js/modules/visualizer.js" defer></script>
     <script src="static/js/utils/throttle.js" defer></script>
     <script src="static/js/listen.js" defer></script>
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => document.querySelector('.js-loader').classList.add('loader--is-hidden'), 400);
+      })
+    </script>
   </body>
 </html>
