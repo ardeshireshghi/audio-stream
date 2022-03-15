@@ -18,13 +18,16 @@ const {
 } = require('../../../dist/app/interface-adapters/services/TrackMetadataQueue');
 
 const tracksController = createTracksController(services.trackService);
-const staticAssetsPath = path.resolve(__dirname + '/../../../ui');
-const metadataCache = [];
-
 const mediaPersistWorkerPool = new WorkerPool({
   size: 20,
   taskPath: './lib/media-persist-worker/worker.js'
 });
+
+const staticAssetsPath = path.resolve(__dirname + '/../../../ui');
+
+const staticAssetsHandler = (req, res) => {
+  createReadStream(`.${req.url.replace('static', 'ui')}`).pipe(res);
+};
 
 const listenReqHandler = (_, res) => {
   res.setHeader('content-type', 'text/html');
@@ -36,10 +39,6 @@ const recordReqHandler = withBasicAuth((_, res) => {
   res.setHeader('content-type', 'text/html');
   createReadStream(`${staticAssetsPath}/index.html`).pipe(res);
 });
-
-const staticAssetsHandler = (req, res) => {
-  createReadStream(`.${req.url.replace('static', 'ui')}`).pipe(res);
-};
 
 const metadataReqHandler = (req, res) => {
   req.on('data', (chunk) => {
@@ -118,4 +117,4 @@ const getRouteByUrl = (url) => {
   }
 };
 
-exports.default = getRouteByUrl;
+exports.getRouteByUrl = getRouteByUrl;

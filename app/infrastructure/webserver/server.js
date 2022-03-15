@@ -1,5 +1,5 @@
 const http = require('http');
-const { default: getRouteByUrl } = require('./router');
+const { getRouteByUrl } = require('./router');
 
 const PORT = process.env.PORT || 9999;
 
