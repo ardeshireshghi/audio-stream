@@ -1,6 +1,6 @@
 # audio-stream
 
-POC for testing Audio recording and streaming on web
+POC for testing Audio recording and streaming on web.
 
 ## Installation
 
@@ -29,3 +29,12 @@ Go to http://localhost:9999/record to record and http://localhost:9999/ to liste
 Currently the app is deployed on Heroku. There is no CI/CD setup at the moment so the deployment happens from a local machine. The current live URL is:
 
 https://audio-stream-web.herokuapp.com/
+
+## Infrastructure
+
+1. Heroku: Hosts the web app and at the moment the deployment is not automated
+2. AWS: Hosts the Lambda function which converts `.ogg` audio files on the S3 Blob store to `.mp3`. This function is provisioned by Pulumi and the process to deploy it automated on Github workflow actions.
+
+## High level Architecture
+
+![Audio stream architecture diagram](Audio-stream-architecture.jpeg)
