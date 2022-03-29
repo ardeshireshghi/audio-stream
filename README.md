@@ -28,6 +28,10 @@ $ yarn dev
 
 Go to http://localhost:9999/record to record and http://localhost:9999/ to listen. You can start recording and then opening the listen page and press play to hear the stream in real-time.
 
+#### Listen page configuration
+
+You can configure the cover image and page title of the listen page by changing values in [config.js](https://github.com/ardeshireshghi/audio-stream/blob/main/ui/js/config.js).
+
 ## Deployment
 
 Currently the app is deployed on Heroku. There is no CI/CD setup at the moment so the deployment happens from a local machine. The current live URL is:

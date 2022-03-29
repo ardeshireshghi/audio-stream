@@ -6,9 +6,13 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
-    <title>Ardi Radio and tracks</title>
+    <title class="js-page-title"></title>
     <link href="/static/styles/app.css" rel="stylesheet" type="text/css" />
-    <link href="/static/styles/load-awesome.css" rel="stylesheet" type="text/css" />
+    <link
+      href="/static/styles/load-awesome.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
     <style>
       :root {
@@ -81,7 +85,6 @@
       }
 
       .cover {
-        background-image: url(https://about.me/cdn-cgi/image/q=40,dpr=2,f=auto,fit=cover,w=620,h=413.3333333333333,gravity=0.25x0.25/https://assets.about.me/background/users/a/r/d/ardi.eshghi_gmail.com_1478774301_45.jpg);
         background-position: center;
         background-repeat: no-repeat;
         width: 350px;
@@ -269,7 +272,6 @@
         }
       }
     </style>
-
   </head>
   <body>
     <div class="loader js-loader">
@@ -284,7 +286,7 @@
     <div class="wrapper">
       <div class="content">
         <div class="hero">
-          <div class="cover"></div>
+          <div class="js-cover cover"></div>
           <div style="display: flex; flex-direction: column">
             <div class="title">
               Hello!<br />
@@ -320,14 +322,21 @@
     <script src="https://unpkg.com/@eardi/vanilla-js-sidebar@0.5.3/src/sidebar.js"></script>
     <script src="static/js/modules/visualizer.js" defer></script>
     <script src="static/js/utils/throttle.js" defer></script>
+    <script src="static/js/config.js" defer></script>
     <script src="static/js/listen.js" defer></script>
     <script>
       window.addEventListener('DOMContentLoaded', () => {
         // BAD intentional UX
         const INTENTIONAL_DELAY_MS = 400;
 
-        setTimeout(() => document.querySelector('.js-loader').classList.add('loader--is-hidden'), INTENTIONAL_DELAY_MS);
-      })
+        setTimeout(
+          () =>
+            document
+              .querySelector('.js-loader')
+              .classList.add('loader--is-hidden'),
+          INTENTIONAL_DELAY_MS
+        );
+      });
     </script>
   </body>
 </html>
