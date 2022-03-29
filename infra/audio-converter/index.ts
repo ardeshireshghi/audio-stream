@@ -34,7 +34,7 @@ const func = new aws.lambda.Function(LAMBDA_FUNCTION_NAME, {
   packageType: 'Image',
   imageUri: image.imageValue,
   role: role.arn,
-  timeout: 60
+  timeout: 120
 });
 
 const BUCKET_NAME =
