@@ -39,8 +39,8 @@ exports.encodeToMp3 = (audioStream) => {
         await execAsyncCommand(command, [
           '-i',
           TMP_OGG_AUDIO_PATH,
-          '-acodec',
-          'libmp3lame',
+          '-b:a',
+          '320k',
           TMP_MP3_OUTPUT_PATH
         ]);
         const mp3Buffer = await readFile(TMP_MP3_OUTPUT_PATH);

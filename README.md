@@ -4,8 +4,6 @@
 
 POC for testing Audio recording and streaming on web.
 
-![Heroku](https://heroku-badge.herokuapp.com/?app=audio-stream-web)
-
 ## Installation
 
 You need node > 12 and `yarn` to run the app.
