@@ -2,7 +2,7 @@
 
 ![Gif Demo](assets/audio-stream-screengrab.gif)
 
-POC for testing Audio recording and streaming on web.
+POC for testing Audio recording and streaming on web. Really interesting experiment
 
 ## Installation
 
